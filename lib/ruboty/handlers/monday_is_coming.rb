@@ -30,7 +30,7 @@ module Ruboty
       end
 
       def illusts
-        if !@illusts_cache || (Time.now.to_i - @illusts_cached_at) > CACHE_TTL
+        if !@illusts_cache || (Time.now - @illusts_cached_at) > CACHE_TTL
           @illusts_cache = illusts_without_cache()
           @illusts_cached_at = Time.now
         end
