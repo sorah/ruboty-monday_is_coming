@@ -3,6 +3,7 @@ require 'ruboty/handlers/base'
 require 'open-uri'
 require 'uri'
 require 'csv'
+require 'time'
 
 module Ruboty
   module Handlers
@@ -26,7 +27,14 @@ module Ruboty
       private
 
       def image_url
-        illusts.sample[:mobile_thumbnail_max_width_480]
+        time = Time.now
+        illust = if time.monday?
+          beg = Time.local(time.year, time.month, time.day, 0, 0, 0, '+09:00')
+          illusts.select { |_| _[:uploaded_at] >= beg }.min || illusts.sample
+        else
+          illusts.sample
+        end
+        illust[:mobile_thumbnail_max_width_480]
       end
 
       def illusts
@@ -57,7 +65,7 @@ module Ruboty
             artist_nickname: line[5],
             mobile_thumbnail_128_url: line[6],
             mobile_thumbnail_max_width_480: line[9],
-            uploaded_at: line[12],
+            uploaded_at: Time.parse(line[12] + ' +09:00'),
             tags: line[13],
             software: line[14],
             ratings_count: line[15],
